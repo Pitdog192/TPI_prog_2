@@ -1,40 +1,47 @@
 package entities;
-import java.util.Date;
 
-public class Vehiculo extends Base{
+public class Vehiculo extends Base {
+
     private String dominio;
     private String marca;
+    private String modelo;
     private Integer anio;
     private String nro_chasis;
-    private int id_seguro;
-    private SeguroVehicular seguro;
+    private Integer id_seguro;        // puede ser null en la BD
+    private SeguroVehicular seguro;   // detalle (B)
 
     // Constructor vacío
     public Vehiculo() {
         super();
     }
-    
+
     // Constructor solo con id y eliminado
-    public Vehiculo(int id, boolean eliminado) {
+    public Vehiculo(Long id, Boolean eliminado) {
         super(id, eliminado);
     }
-    
-    // Constructor evitando seguro
-    public Vehiculo(int id, boolean eliminado, String dominio, String marca, Integer anio, String nro_chasis, int id_seguro) {
+
+    // Constructor sin objeto Seguro (solo FK)
+    public Vehiculo(Long id, Boolean eliminado,
+                    String dominio, String marca, String modelo,
+                    Integer anio, String nro_chasis, Integer id_seguro) {
         super(id, eliminado);
         this.dominio = dominio;
         this.marca = marca;
+        this.modelo = modelo;
         this.anio = anio;
         this.nro_chasis = nro_chasis;
         this.id_seguro = id_seguro;
     }
-    
-    // Constructor completo incluyendo el detalle (SeguroVehicular)
-    public Vehiculo(int id, boolean eliminado, String dominio, String marca, String modelo, Integer anio, String nro_chasis, Integer id_seguro, SeguroVehicular seguro) {
+
+    // Constructor completo incluyendo el detalle SeguroVehicular
+    public Vehiculo(Long id, Boolean eliminado,
+                    String dominio, String marca, String modelo,
+                    Integer anio, String nro_chasis,
+                    Integer id_seguro, SeguroVehicular seguro) {
         super(id, eliminado);
         this.dominio = dominio;
         this.marca = marca;
-        this.marca = marca;
+        this.modelo = modelo;
         this.anio = anio;
         this.nro_chasis = nro_chasis;
         this.id_seguro = id_seguro;
@@ -55,6 +62,14 @@ public class Vehiculo extends Base{
 
     public void setMarca(String marca) {
         this.marca = marca;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
     }
 
     public Integer getAnio() {
@@ -81,6 +96,7 @@ public class Vehiculo extends Base{
         this.id_seguro = id_seguro;
     }
 
+    // Para cumplir con la consigna A contiene private B detalle;
     public SeguroVehicular getDetalle() {
         return seguro;
     }
@@ -93,13 +109,13 @@ public class Vehiculo extends Base{
     public String toString() {
         return "Vehiculo{" +
                 "id=" + getId() +
-                ", eliminado=" + isEliminado() +
+                ", eliminado=" + getEliminado() +
                 ", dominio='" + dominio + '\'' +
                 ", marca='" + marca + '\'' +
+                ", modelo='" + modelo + '\'' +
                 ", anio=" + anio +
                 ", nro_chasis='" + nro_chasis + '\'' +
                 ", id_seguro=" + id_seguro +
-                ", detalle=" + (seguro != null ? seguro.toString() : "sin seguro") +
                 '}';
     }
 }

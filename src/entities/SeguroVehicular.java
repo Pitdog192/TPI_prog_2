@@ -5,22 +5,23 @@ import java.util.Date;
 public class SeguroVehicular extends Base {
     private String aseguradora;
     private String nro_poliza;
-    private String cobertura;
+    private Cobertura cobertura;
     private Date vencimiento;
 
     // Constructor vacío
     public SeguroVehicular() {
         super();
     }
-    
+
     // Constructor solo con id y eliminado
-    public SeguroVehicular(int id, boolean eliminado) {
+    public SeguroVehicular(Long id, Boolean eliminado) {
         super(id, eliminado);
     }
-    
+
     // Constructor completo (incluyendo campos de Base)
-    public SeguroVehicular(int id, boolean eliminado, String aseguradora, String nro_poliza,
-                           String cobertura, Date vencimiento) {
+    public SeguroVehicular(Long id, Boolean eliminado,
+                           String aseguradora, String nro_poliza,
+                           Cobertura cobertura, Date vencimiento) {
         super(id, eliminado);
         this.aseguradora = aseguradora;
         this.nro_poliza = nro_poliza;
@@ -44,11 +45,11 @@ public class SeguroVehicular extends Base {
         this.nro_poliza = nro_poliza;
     }
 
-    public String getCobertura() {
+    public Cobertura getCobertura() {
         return cobertura;
     }
 
-    public void setCobertura(String cobertura) {
+    public void setCobertura(Cobertura cobertura) {
         this.cobertura = cobertura;
     }
 
@@ -64,7 +65,7 @@ public class SeguroVehicular extends Base {
     public String toString() {
         return "SeguroVehicular{" +
                 "id=" + getId() +
-                ", eliminado=" + isEliminado() +
+                ", eliminado=" + getEliminado() +
                 ", aseguradora='" + aseguradora + '\'' +
                 ", nro_poliza='" + nro_poliza + '\'' +
                 ", cobertura='" + cobertura + '\'' +

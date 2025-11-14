@@ -1,30 +1,34 @@
 package entities;
 
+/**
+ *
+ * @author Arroquigarays
+ */
 public abstract class Base {
-    private int id;
-    private boolean eliminado;
-    
-    public Base(){
+    private Long id;
+    private Boolean eliminado;
+
+    public Base() {
     }
-    
-    public Base(int id, boolean eliminado){
+
+    public Base(Long id, Boolean eliminado) {
         this.id = id;
         this.eliminado = eliminado;
     }
-    
-    public int getId(){
+
+    public Long getId() {
         return id;
     }
-    
-    public void setId(int id) {
+
+    public void setId(Long id) {
         this.id = id;
     }
-    
-    public boolean isEliminado() {
+
+    public Boolean getEliminado() {
         return eliminado;
     }
-    
-    public void setEliminado(boolean eliminado) {
+
+    public void setEliminado(Boolean eliminado) {
         this.eliminado = eliminado;
     }
 
@@ -36,6 +40,3 @@ public abstract class Base {
                 '}';
     }
 }
-
-
-
