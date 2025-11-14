@@ -36,11 +36,14 @@ La aplicación es **de consola** e implementa un menú (`AppMenu`) con opciones 
 - IDE opcional: NetBeans / IntelliJ / Eclipse o compilación por línea de comandos.
 
 - ### Paso a paso creación Bases de datos
-- 1. Se crea la base de datos
+  1.
+     Se crea la base de datos
+    
      CREATE DATABASE IF NOT EXISTS `Vehiculos_con_seguro`;
      use Vehiculos_con_seguro;
-  2. Se crean las tablas necesarias
-  3. 
+  3.
+     Se crean las tablas necesarias
+    
      CREATE TABLE vehiculos(
 	    id int primary key auto_increment, /* Aunque se tengan el dominio y nro_chasis que suelen ser únicos, por causas excepcionales podrían cambiar, por lo tanto se usa el id como identificador único por estabilidad y performance*/ 
       eliminado boolean,
@@ -63,7 +66,9 @@ La aplicación es **de consola** e implementa un menú (`AppMenu`) con opciones 
       CONSTRAINT chk_seguros_cobertura CHECK (cobertura IN ('RC','TERCEROS','TODO_RIESGO'))
   );
 
-4. Se añaden las relaciones
+4.
+   Se añaden las relaciones
+   
    ALTER TABLE vehiculos 
 	ADD CONSTRAINT fk_id_seguro 
     FOREIGN KEY (id_seguro) 
