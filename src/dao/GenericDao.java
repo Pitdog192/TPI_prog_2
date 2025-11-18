@@ -23,4 +23,8 @@ public interface GenericDao<T> {
     List<T> leerTodos(Connection conn) throws SQLException;
     void actualizar(T entidad, Connection conn) throws SQLException;
     void eliminar(long id, Connection conn) throws SQLException;
+
+    default T leerConDetalle(long id) throws SQLException {
+        throw new UnsupportedOperationException("leerConDetalle no implementado");
+    }
 }

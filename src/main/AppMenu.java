@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- *
+ * Menú principal de la aplicación
  * @author Arroquigarays
  */
 public class AppMenu {
@@ -72,6 +72,7 @@ public class AppMenu {
             System.out.println("5 - Eliminar lógico vehículo");
             System.out.println("6 - Buscar por dominio");
             System.out.println("7 - Crear vehículo con seguro nuevo");
+            System.out.println("8 - Leer vehículo con su seguro (JOIN)");
             System.out.println("X - Volver");
             System.out.print("Opción: ");
 
@@ -99,6 +100,9 @@ public class AppMenu {
                         break;
                     case "7":
                         crearVehiculoConSeguroNuevo();
+                        break;
+                    case "8":
+                        leerVehiculoConSeguro();
                         break;
                     case "X":
                         volver = true;
@@ -244,6 +248,33 @@ public class AppMenu {
             System.out.println("No se encontró vehículo con ID " + id);
         } else {
             System.out.println(v);
+        }
+    }
+
+    /**
+     * Opción 8: Leer vehículo con su seguro usando JOIN
+     */
+    private void leerVehiculoConSeguro() throws SQLException {
+        System.out.print("\nIngrese ID del vehículo: ");
+        String idStr = scanner.nextLine().trim();
+        long id = Long.parseLong(idStr);
+
+        // Usamos el método del service que realiza el JOIN
+        Vehiculo v = vehiculoService.getByIdConDetalle(id);
+
+        if (v == null) {
+            System.out.println("No existe vehículo con ID " + id);
+            return;
+        }
+
+        System.out.println("\n=== VEHÍCULO ===");
+        System.out.println(v);
+
+        System.out.println("\n=== SEGURO ASOCIADO ===");
+        if (v.getSeguro() != null) {
+            System.out.println(v.getSeguro());
+        } else {
+            System.out.println("Este vehículo NO tiene un seguro asociado.");
         }
     }
 

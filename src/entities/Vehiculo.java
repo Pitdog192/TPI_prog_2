@@ -105,6 +105,14 @@ public class Vehiculo extends Base {
         this.seguro = seguro;
     }
 
+    public SeguroVehicular getSeguro() {
+    return seguro;
+    }
+
+    public void setSeguro(SeguroVehicular seguro) {
+    this.seguro = seguro;
+    }
+
     @Override
     public String toString() {
         return "Vehiculo{" +

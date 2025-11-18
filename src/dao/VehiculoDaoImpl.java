@@ -2,13 +2,23 @@ package dao;
 
 import config.DatabaseConnection;
 import entities.Vehiculo;
+import entities.SeguroVehicular;
+import entities.Cobertura;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementación del DAO para la entidad Vehiculo
+ * @author Arroquigarays
+ */
 public class VehiculoDaoImpl implements GenericDao<Vehiculo> {
+    
+    // ========================================
     // SQL Statements
+    // ========================================
+    
     private static final String INSERT_SQL =
         "INSERT INTO vehiculos (eliminado, dominio, marca, modelo, anio, nro_chasis, id_seguro) " +
         "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -27,6 +37,13 @@ public class VehiculoDaoImpl implements GenericDao<Vehiculo> {
 
     private static final String DELETE_SQL =
         "DELETE FROM vehiculos WHERE id = ?";
+
+    private static final String SELECT_WITH_SEGURO_SQL =
+        "SELECT v.id AS v_id, v.eliminado AS v_eliminado, v.dominio, v.marca, v.modelo, v.anio, v.nro_chasis, v.id_seguro, " +
+        "s.id AS s_id, s.eliminado AS s_eliminado, s.aseguradora, s.nro_poliza, s.cobertura, s.vencimiento " +
+        "FROM vehiculos v " +
+        "LEFT JOIN seguro_vehicular s ON v.id_seguro = s.id " +
+        "WHERE v.id = ?";
 
     // ========================================
     // Métodos con conexión propia
@@ -65,6 +82,26 @@ public class VehiculoDaoImpl implements GenericDao<Vehiculo> {
         try (Connection conn = DatabaseConnection.getConnection()) {
             eliminar(id, conn);
         }
+    }
+
+    // ========================================
+    // Método con JOIN (leer vehículo con seguro)
+    // ========================================
+
+    @Override
+    public Vehiculo leerConDetalle(long id) throws SQLException {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SELECT_WITH_SEGURO_SQL)) {
+
+            ps.setLong(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRowToVehiculoConSeguro(rs);
+                }
+            }
+        }
+        return null;
     }
 
     // ========================================
@@ -169,9 +206,12 @@ public class VehiculoDaoImpl implements GenericDao<Vehiculo> {
     }
 
     // ========================================
-    // Helper para mapear ResultSet a objeto
+    // Helpers para mapear ResultSet a objeto
     // ========================================
 
+    /**
+     * Mapea un ResultSet a un objeto Vehiculo (sin seguro)
+     */
     private Vehiculo mapRowToVehiculo(ResultSet rs) throws SQLException {
         Vehiculo vehiculo = new Vehiculo();
         vehiculo.setId(rs.getLong("id"));
@@ -189,6 +229,45 @@ public class VehiculoDaoImpl implements GenericDao<Vehiculo> {
         // Manejo de campo nullable id_seguro
         int idSeguro = rs.getInt("id_seguro");
         vehiculo.setId_seguro(rs.wasNull() ? null : idSeguro);
+
+        return vehiculo;
+    }
+
+    /**
+     * Mapea un ResultSet a un objeto Vehiculo CON su SeguroVehicular (JOIN)
+     */
+    private Vehiculo mapRowToVehiculoConSeguro(ResultSet rs) throws SQLException {
+        Vehiculo vehiculo = new Vehiculo();
+        vehiculo.setId(rs.getLong("v_id"));
+        vehiculo.setEliminado(rs.getBoolean("v_eliminado"));
+        vehiculo.setDominio(rs.getString("dominio"));
+        vehiculo.setMarca(rs.getString("marca"));
+        vehiculo.setModelo(rs.getString("modelo"));
+
+        // Manejo de campo nullable anio
+        int anio = rs.getInt("anio");
+        vehiculo.setAnio(rs.wasNull() ? null : anio);
+
+        vehiculo.setNro_chasis(rs.getString("nro_chasis"));
+
+        // Manejo de campo nullable id_seguro
+        int idSeguro = rs.getInt("id_seguro");
+        vehiculo.setId_seguro(rs.wasNull() ? null : idSeguro);
+
+        // Mapear el seguro si existe (LEFT JOIN puede devolver NULL)
+        int seguroId = rs.getInt("s_id");
+        if (!rs.wasNull()) {
+            SeguroVehicular seguro = new SeguroVehicular();
+            seguro.setId((long) seguroId);
+            seguro.setEliminado(rs.getBoolean("s_eliminado"));
+            seguro.setAseguradora(rs.getString("aseguradora"));
+            seguro.setNro_poliza(rs.getString("nro_poliza"));
+            seguro.setCobertura(Cobertura.valueOf(rs.getString("cobertura")));
+            seguro.setVencimiento(rs.getDate("vencimiento"));
+
+            // Asociar el seguro al vehículo
+            vehiculo.setDetalle(seguro);
+        }
 
         return vehiculo;
     }

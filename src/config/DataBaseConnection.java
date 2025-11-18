@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package config;
 
 import java.sql.Connection;
@@ -12,10 +8,10 @@ import java.sql.SQLException;
  *
  * @author Arroquigarays
  */
-public class DataBaseConnection {
+public class DatabaseConnection {
         
     // Datos de conexión - Se configuran directamente en el código
-    private static final String URL = "jdbc:mysql://localhost:3306/prueba_instalacion";
+    private static final String URL = "jdbc:mysql://localhost:3306/vehiculos_con_seguro";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
@@ -31,9 +27,7 @@ public class DataBaseConnection {
 
     /**
      * Valida que los parámetros de configuración sean válidos.
-     * Llamado una sola vez desde el bloque static.
      *
-     * Reglas:
      * - URL y USER no pueden ser null ni estar vacíos
      * - PASSWORD puede ser vacío (común en MySQL local root sin password)
      * - PASSWORD no puede ser null

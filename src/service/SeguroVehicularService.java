@@ -8,14 +8,19 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
+ * Servicio para gestionar Seguros Vehiculares
  * @author Arroquigarays
  */
 public class SeguroVehicularService implements GenericService<SeguroVehicular> {
-    private final SeguroVehicularDaoImpl seguroDao = new SeguroVehicularDaoImpl();
+    
+    private final SeguroVehicularDaoImpl seguroDao;
+
+    public SeguroVehicularService() {
+        this.seguroDao = new SeguroVehicularDaoImpl();
+    }
 
     // =========================
-    // Métodos simples (sin transacción compuesta)
+    // Métodos CRUD básicos
     // =========================
 
     @Override
@@ -29,7 +34,8 @@ public class SeguroVehicularService implements GenericService<SeguroVehicular> {
         if (entidad.getId() == null || entidad.getId() == 0L) {
             throw new IllegalArgumentException("El ID del seguro no puede ser null o 0 para actualizar");
         }
-        validar(entidad);
+        
+        validarParaActualizacion(entidad);
         seguroDao.actualizar(entidad);
         return entidad;
     }
@@ -53,7 +59,34 @@ public class SeguroVehicularService implements GenericService<SeguroVehicular> {
     // Validaciones de dominio
     // =========================
 
+    /**
+     * Validación estricta para inserción (no permite seguros vencidos)
+     */
     private void validar(SeguroVehicular s) {
+        validarCamposObligatorios(s);
+        
+        // Al crear, no permitir seguros ya vencidos
+        if (s.getVencimiento().before(new Date())) {
+            throw new IllegalArgumentException("No se puede crear un seguro con fecha de vencimiento pasada");
+        }
+    }
+
+    /**
+     * Validación flexible para actualización (permite seguros vencidos)
+     */
+    private void validarParaActualizacion(SeguroVehicular s) {
+        validarCamposObligatorios(s);
+        // Al actualizar, SÍ permitimos modificar seguros vencidos
+    }
+
+    /**
+     * Validación de campos obligatorios (usada internamente y desde VehiculoService)
+     */
+    public void validarSeguro(SeguroVehicular s) {
+        validarCamposObligatorios(s);
+    }
+
+    private void validarCamposObligatorios(SeguroVehicular s) {
         if (s == null) {
             throw new IllegalArgumentException("El seguro no puede ser null");
         }
@@ -66,11 +99,23 @@ public class SeguroVehicularService implements GenericService<SeguroVehicular> {
         if (s.getVencimiento() == null) {
             throw new IllegalArgumentException("La fecha de vencimiento es obligatoria");
         }
-        if (s.getVencimiento().before(new Date())) {
-            throw new IllegalArgumentException("La fecha de vencimiento no puede estar vencida");
-        }
         if (s.getCobertura() == null) {
             throw new IllegalArgumentException("La cobertura es obligatoria");
         }
+    }
+
+    /**
+     * Verifica si un seguro está vencido
+     */
+    public boolean estaVencido(SeguroVehicular seguro) {
+        return seguro.getVencimiento().before(new Date());
+    }
+
+    /**
+     * Verifica si un seguro está vencido por ID
+     */
+    public boolean estaVencido(long id) throws SQLException {
+        SeguroVehicular seguro = getById(id);
+        return seguro != null && estaVencido(seguro);
     }
 }
